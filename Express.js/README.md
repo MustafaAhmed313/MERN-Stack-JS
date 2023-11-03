@@ -317,6 +317,28 @@ the `await` and `async` for making sure that the transaction on the database is 
 
 <img src="./../images/Screenshot 2023-11-03 195504.png">
 
+but we need to `encrypt` the `password` field for the `security` of it and store it in the database as `hashcode` object so we need to install the `bcrypt` package using the following command:
+
+```
+npm install bcrypt
+```
+and then inport it in our project
+
+```javascript
+import bcrypt from 'bcrypt';
+```
+
+then type the following commands to encrybt the password field: 
+
+```javascript
+const salt = await bcrypt.genSalt(10);
+req.body.password = await bcrypt.hash(req.body.password , salt);
+```
+
+it will be something like this:
+
+<img src="./../images/Screenshot 2023-11-04 004554.png">
+
 I used `findOne()` method to retrieve one object from the model based on specified data. The constructor of the `User` model generates user object using the bady parameters by matching each on to the `schema` variable. The `save()` method for storing the object in the table of the `users` in the database.
 
 #### Get All Users API

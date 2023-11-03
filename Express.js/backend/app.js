@@ -1,5 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 import User from './models/user.js';
 
 const app = express();
@@ -59,8 +60,9 @@ app.post('/api/adduser' , async (req , res) => {
         if (await User.findOne({email: userParams.email})) {
             res.status(400).send(`The email ${userParams.email} already exist!`);
         }
+        const salt = await bcrypt.genSalt(10);
+        req.body.password = await bcrypt.hash(req.body.password , salt);
         const user = new User(req.body);
-        console.log(user);
         await user.save();
         res.status(201).send('The user has been added successfully!');
     }catch(error) {
@@ -72,6 +74,10 @@ app.put('/api/updateuser/:id' , async (req , res) => {
     try {
         const body = req.body;
         const id = req.params.id;
+        if (req.body.password) {
+            const salt = await bcrypt.genSalt(10);
+            req.body.password = await bcrypt.hash(req.body.password , salt);
+        }
         const user = await User.findByIdAndUpdate(id , body , {new: true});
         if (!user) {
             res.status(404).send('user not found!');
